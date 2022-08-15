@@ -1,0 +1,40 @@
+version: '3.1'
+
+services:
+
+  go-bookstore:
+    restart: always
+    depends_on:
+      - db
+    links:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: "db"
+      APP_PORT: "8080"
+    networks:
+      - local
+
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "33066:3306"
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - local
+
+volumes:
+  db:
+
+networks:
+  local:
+    driver: bridge
